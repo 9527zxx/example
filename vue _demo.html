@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>测试实例</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<style>
+    tr td{
+        border:1px solid #333;
+    }
+    tr td:first-child,tr td:nth-child(2){
+        width: 130px;
+    }
+</style>
+<body>
+<div id="app">
+    <div style="margin-bottom: 0px">
+        <div>
+            <h3>车型列表项目</h3>
+        </div>
+        <div>
+            序号：<input type="text" v-model="id"   :disabled = "isDisabled"/>
+            车型：<input type="text" v-model="name" :disabled = "isDisabled"/>
+            <input type="button" value="添加" @click="add()"/>
+            搜索：<input type="text" v-model="searchKey"/>
+            <span v-show="ok">{{time}}秒</span>
+
+        </div>
+    </div>
+    <table style="text-align: center">
+        <header>
+            <tr>
+                <td>序号</td>
+
+                <td>车型</td>
+                <td>添加时间</td>
+                <td>操作</td>
+            </tr>
+        </header>
+        <tbody>
+        <tr v-for="(item,key) in search(searchKey)">
+            <td>{{ item.id }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.time }}</td>
+            <td><a href="" @click.prevent="del(key)">删除</a></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+  var vm = new Vue({
+    el: "#app",
+    data: {
+      id: '',
+      name: '',
+      searchKey: '',
+      time:20,
+      isDisabled:false,
+      ok:false,
+      list: [
+        { id: 1, name: '奥迪', time: new Date() },
+        { id: 2, name: '宝马', time: new Date() },
+        { id: 3, name: '奔驰', time: new Date() },
+        { id: 4, name: '保时捷', time: new Date() }
+      ]
+    },
+    methods:{
+      search(searchKey){
+        console.log(searchKey);
+        return this.list.filter(item => {
+          console.log(item);
+          if(item.name.includes(searchKey)){
+            return item;
+          }
+        });
+      },
+      del(key){
+            this.list.splice(key,1);
+      },
+      add(){
+        var that = this;
+        var id = that.id;
+        var name = that.name;
+        if(!id){
+          alert('请输入序号!');
+        }else if(!name){
+          alert('请输入车型!');
+        }else{
+          var car = {
+            id: id,
+            name:name,
+            time:new Date(),
+          }
+          that.list.push(car);
+          that.isDisabled = true;
+          that.ok = true;
+          that.id=that.name='';
+          var timer1 = setInterval(function () {
+            if(that.time == 1){
+              that.isDisabled = false;
+              that.ok = false;
+              that.time = 20;
+              clearInterval(timer1);
+            }else {
+              that.time = that.time - 1;
+            }
+          },1000)
+        }
+      }
+    }
+  })
+</script>
+</body>
+</html>
